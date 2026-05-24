@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<script>
+window.contextInfo = {"files":[],"materials":[],"crafts":[]};
+// 处理锚点链接跳转（srcDoc iframe 中锚点链接默认行为不正确）
+document.addEventListener('click', function(e) {
+  var anchor = e.target.closest('a');
+  if (anchor) {
+    var href = anchor.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      var targetId = href.slice(1);
+      var target = document.getElementById(targetId);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }
+});
+</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Studio Nilan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --brown: #5b4e4a;
+      --pink-light: #FFB6C1;
+      --pink-medium: #FFC0CB;
+      --white: #ffffff;
+      --overlay: rgba(30, 20, 18, 0.45);
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    /* ─── VIDEO BACKGROUND ─── */
+    #video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    #video-background video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: cover;
+    }
+
+    /* Mobil dikey ekran için */
+    @media (max-width: 768px) and (orientation: portrait) {
+      #video-background video {
+        width: 100%;
+        height: 100%;
+        min-width: 100%;
+        min-height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .video-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--overlay);
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── HEADER / NAV ─── */
+    header {
+      padding: 2rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      color: var(--white);
+      text-transform: uppercase;
+    }
+
+    .logo span {
+      color: var(--pink-light);
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem 6rem;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.35em;
+      color: var(--pink-light);
+      text-transform: uppercase;
+      margin-bottom: 1.8rem;
+      opacity: 0;
+      animation: fadeUp 1s 0.3s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--white);
+      max-width: 820px;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 1s 0.55s forwards;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--pink-light);
+    }
+
+    .hero-desc {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(0.78rem, 1.5vw, 0.92rem);
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(255,255,255,0.82);
+      max-width: 620px;
+      margin-bottom: 3.5rem;
+      opacity: 0;
+      animation: fadeUp 1s 0.8s forwards;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeUp 1s 1.05s forwards;
+    }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 2.2rem;
+      border-radius: 2px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      text-decoration: none;
+      position: relative;
+    }
+
+    .btn-primary {
+      background: var(--pink-light);
+      color: var(--brown);
+    }
+
+    .btn-primary:hover {
+      background: #f9a0b2;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255,182,193,0.35);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    /* ─── CONTACT DROPDOWN ─── */
+    .contact-dropdown-wrapper {
+      position: relative;
+    }
+
+    .contact-dropdown {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) translateY(-8px);
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+      padding: 0.5rem;
+      min-width: 230px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      z-index: 100;
+    }
+
+    .contact-dropdown.open {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .contact-dropdown a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 3px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--brown);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: background 0.2s;
+    }
+
+    .contact-dropdown a:hover {
+      background: #fff0f3;
+    }
+
+    .contact-dropdown a .icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .icon-email { background: #fce4ec; }
+    .icon-wa { background: #e8f5e9; }
+
+    .dropdown-divider {
+      height: 1px;
+      background: #f0e8e9;
+      margin: 0.25rem 0;
+    }
+
+    /* ─── INFO PANEL ─── */
+    .panel-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(20,14,12,0.45);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .panel-backdrop.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .info-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      background: #FFB6C1;
+      z-index: 201;
+      transform: translateX(100%);
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-panel.open {
+      transform: translateX(0);
+    }
+
+    .panel-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 40px;
+      height: 40px;
+      background: rgba(91,78,74,0.12);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      z-index: 10;
+    }
+
+    .panel-close:hover {
+      background: rgba(91,78,74,0.22);
+    }
+
+    .panel-close svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--brown);
+      stroke-width: 2;
+    }
+
+    .panel-content {
+      padding: 4rem 3rem 3rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-eyebrow {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--brown);
+      opacity: 0.7;
+      margin-bottom: 1rem;
+    }
+
+    .panel-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 400;
+      color: var(--brown);
+      line-height: 1.1;
+      letter-spacing: 0.05em;
+      margin-bottom: 2.5rem;
+    }
+
+    .panel-divider {
+      width: 48px;
+      height: 2px;
+      background: var(--brown);
+      opacity: 0.3;
+      margin-bottom: 2.5rem;
+    }
+
+    .panel-section {
+      margin-bottom: 2.2rem;
+    }
+
+    .panel-section-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--brown);
+      margin-bottom: 0.9rem;
+    }
+
+    .panel-section-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      line-height: 1.85;
+      color: rgba(91,78,74,0.85);
+    }
+
+    .panel-contact-btn {
+      margin-top: auto;
+      padding-top: 2rem;
+    }
+
+    .panel-contact-btn .btn-primary {
+      background: var(--brown);
+      color: var(--white);
+    }
+
+    .panel-contact-btn .btn-primary:hover {
+      background: #4a3e3a;
+      box-shadow: 0 8px 24px rgba(91,78,74,0.3);
+    }
+
+    /* Panel contact dropdown */
+    .panel-contact-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .panel-contact-dropdown {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 0;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+      padding: 0.5rem;
+      min-width: 230px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      z-index: 10;
+      transform: translateY(8px);
+    }
+
+    .panel-contact-dropdown.open {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      position: relative;
+      z-index: 1;
+      padding: 2rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .footer-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem 3rem;
+    }
+
+    .footer-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .footer-label {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--pink-light);
+      opacity: 0.8;
+    }
+
+    .footer-value {
+      font-size: 0.75rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.75);
+      letter-spacing: 0.05em;
+    }
+
+    .footer-value a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-value a:hover {
+      color: var(--pink-light);
+    }
+
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.35);
+      text-transform: uppercase;
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ─── SCROLLBAR ─── */
+    .info-panel::-webkit-scrollbar {
+      width: 4px;
+    }
+    .info-panel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .info-panel::-webkit-scrollbar-thumb {
+      background: rgba(91,78,74,0.3);
+      border-radius: 2px;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      header {
+        padding: 1.5rem 1.5rem;
+      }
+
+      .hero {
+        padding: 3rem 1.5rem 5rem;
+      }
+
+      footer {
+        padding: 1.5rem 1.5rem;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .info-panel {
+        width: 100%;
+      }
+
+      .panel-content {
+        padding: 4rem 1.8rem 2.5rem;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 260px;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .footer-info {
+        gap: 1.2rem 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VIDEO BACKGROUND -->
+  <div id="video-background">
+    <video id="bgVideo" autoplay loop muted playsinline preload="auto">
+      <source src="https://cdn.gooo.ai/user-files/3bf76ecfdb8173e1a4273b46f36e79c7b4f63b29e7e16e81e658122f1b98ade6?Expires=1779317025&Key-Pair-Id=K1YV1INCA5FVUW&Signature=hdSeXjqXgCH7kfb5qLkKD~T~zCXZ~csEDzJ~tuPF12S7N9-TyvB9V0Uratdtbsu3ny-pmeWLXGeo8NAbLfU0e8Y~7ofougWAwcpuH6leHkAPlsp1X15EfW4GSU3Y2ltJhXtS9lzxr6NLUKlAAuv9KNnBb-fp9MGJtuMw0q6Ie9AUJVvX2zWvsW99nuVeZ0NUVIphYsyoBpWTlayKi1wJ4ZvWy2n6C8LDDZG1wKyqs1gOEmUCv3StzgalrzA0dPHjbZESqF25wHclRHSPgV~TzbYUU2P0UcqzOhZFnjStXutquozg3vdYROBybiIzPjBlMXRD2clOZnV7o5fkmOha3Q__" type="video/mp4" />
+    </video>
+    <div class="video-overlay"></div>
+  </div>
+
+  <!-- PAGE -->
+  <div class="page">
+
+    <!-- HEADER -->
+    <header>
+      <div class="logo">Studio <span>Nilan</span></div>
+    </header>
+
+    <!-- HERO -->
+    <main class="hero">
+      <p class="hero-eyebrow">İstanbul · Etiler, Beşiktaş</p>
+
+      <h1 class="hero-title">
+        Studio Nilan,<br /><em>Kalabalığın içinde bir an</em>
+      </h1>
+
+      <p class="hero-desc">
+        Tasarım, üretim ve yaşam stüdyosu. Sinematik, görsel ve el sanatları; konusunda uzman öğretmenler eşliğinde konservatuar hazırlık ve dil pratikleri; şehirde doğal yaşam odaklı disiplinlerarası bir paylaşım merkezi.
+      </p>
+
+      <div class="hero-buttons">
+
+        <!-- RANDEVU AL -->
+        <div class="contact-dropdown-wrapper" id="heroContactWrapper">
+          <button class="btn btn-primary" onclick="toggleHeroDropdown(event)">
+            Randevu Al
+          </button>
+          <div class="contact-dropdown" id="heroDropdown">
+            <a href="mailto:bilgi@studionilan.com">
+              <span class="icon icon-email">✉️</span>
+              bilgi@studionilan.com
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="https://wa.me/905368780345" target="_blank" rel="noopener noreferrer">
+              <span class="icon icon-wa">💬</span>
+              WhatsApp ile Yaz
+            </a>
+          </div>
+        </div>
+
+        <!-- DAHA FAZLA BİLGİ -->
+        <button class="btn btn-secondary" onclick="openPanel()">
+          Daha Fazla Bilgi
+        </button>
+
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-info">
+        <div class="footer-item">
+          <span class="footer-label">Adres</span>
+          <span class="footer-value">Etiler, Beşiktaş — İstanbul</span>
+        </div>
+        <div class="footer-item">
+          <span class="footer-label">Çalışma Saatleri</span>
+          <span class="footer-value">Her gün 09:00 – 19:00 · Randevu ile</span>
+        </div>
+        <div class="footer-item">
+          <span class="footer-label">E-posta</span>
+          <span class="footer-value"><a href="mailto:bilgi@studionilan.com">bilgi@studionilan.com</a></span>
+        </div>
+        <div class="footer-item">
+          <span class="footer-label">Telefon</span>
+          <span class="footer-value"><a href="tel:+905368780345">+90 536 878 0345</a></span>
+        </div>
+      </div>
+      <div class="footer-brand">© 2025 Studio Nilan</div>
+    </footer>
+
+  </div>
+
+  <!-- PANEL BACKDROP -->
+  <div class="panel-backdrop" id="panelBackdrop" onclick="closePanel()"></div>
+
+  <!-- INFO PANEL -->
+  <div class="info-panel" id="infoPanel">
+    <button class="panel-close" onclick="closePanel()" aria-label="Kapat">
+      <svg viewBox="0 0 24 24" fill="none">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+
+    <div class="panel-content">
+      <p class="panel-eyebrow">Hakkımızda</p>
+      <h2 class="panel-title">STUDIO NİLAN<br />İSTANBUL</h2>
+      <div class="panel-divider"></div>
+
+      <div class="panel-section">
+        <p class="panel-section-title">Vizyonumuz</p>
+        <p class="panel-section-text">
+          Sanat, tasarım ve yaşamın kesiştiği noktada, her bireyin yaratıcı potansiyelini keşfetmesine ilham vermek; özgün bir ifade dili geliştirmesine zemin hazırlamak ve kalabalığın gürültüsünde kendine ait sessiz bir an bulmasını sağlamak...
+        </p>
+      </div>
+
+      <div class="panel-section">
+        <p class="panel-section-title">Misyonumuz</p>
+        <p class="panel-section-text">
+          Disiplinlerarası bir yaklaşımla, konusunda uzman eğitmenler eşliğinde nitelikli eğitim ve üretim ortamı sunmak; sinematik, görsel ve el sanatlarını, dil pratiklerini ve doğal yaşam odaklı deneyimleri tek çatı altında buluşturarak İstanbul'un kalbinde özgün bir paylaşım merkezi oluşturmak...
+        </p>
+      </div>
+
+      <div class="panel-contact-btn">
+        <div class="panel-contact-wrapper" id="panelContactWrapper">
+          <button class="btn btn-primary" onclick="togglePanelDropdown(event)">
+            İletişime Geç
+          </button>
+          <div class="panel-contact-dropdown contact-dropdown" id="panelDropdown">
+            <a href="mailto:bilgi@studionilan.com">
+              <span class="icon icon-email">✉️</span>
+              bilgi@studionilan.com
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="https://wa.me/905368780345" target="_blank" rel="noopener noreferrer">
+              <span class="icon icon-wa">💬</span>
+              WhatsApp ile Yaz
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Video Setup ──
+    const video = document.getElementById('bgVideo');
+
+    // Ensure loop is set via JS as well
+    video.loop = true;
+
+    // loadedmetadata: unmute and play
+    video.addEventListener('loadedmetadata', () => {
+      video.muted = false;
+      video.volume = 0.4;
+      video.loop = true;
+      video.play().catch(err => {
+        console.log('Autoplay with sound failed, trying muted first:', err);
+        // Fallback: play muted, unmute on first user interaction
+        video.muted = true;
+        video.play().catch(e => console.log('Muted autoplay also failed:', e));
+        document.addEventListener('click', () => {
+          video.muted = false;
+          video.volume = 0.4;
+          video.play();
+        }, { once: true });
+      });
+    });
+
+    // canplaythrough: additional guarantee
+    video.addEventListener('canplaythrough', () => {
+      if (video.paused) {
+        video.play().catch(err => console.log('canplaythrough play failed:', err));
+      }
+    });
+
+    // Loop guarantee via ended event
+    video.addEventListener('ended', () => {
+      video.currentTime = 0;
+      video.play().catch(err => console.log('Loop replay failed:', err));
+    });
+
+    // Error handling
+    video.addEventListener('error', (e) => {
+      console.log('Video error:', e);
+    });
+
+    // ── Hero dropdown ──
+    function toggleHeroDropdown(e) {
+      e.stopPropagation();
+      const dd = document.getElementById('heroDropdown');
+      dd.classList.toggle('open');
+      // close panel dropdown if open
+      document.getElementById('panelDropdown').classList.remove('open');
+    }
+
+    // ── Panel dropdown ──
+    function togglePanelDropdown(e) {
+      e.stopPropagation();
+      const dd = document.getElementById('panelDropdown');
+      dd.classList.toggle('open');
+    }
+
+    // ── Close dropdowns on outside click ──
+    document.addEventListener('click', function () {
+      document.getElementById('heroDropdown').classList.remove('open');
+      document.getElementById('panelDropdown').classList.remove('open');
+    });
+
+    // ── Info Panel ──
+    function openPanel() {
+      document.getElementById('infoPanel').classList.add('open');
+      document.getElementById('panelBackdrop').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePanel() {
+      document.getElementById('infoPanel').classList.remove('open');
+      document.getElementById('panelBackdrop').classList.remove('open');
+      document.body.style.overflow = '';
+      document.getElementById('panelDropdown').classList.remove('open');
+    }
+
+    // ── Keyboard ESC ──
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closePanel();
+        document.getElementById('heroDropdown').classList.remove('open');
+        document.getElementById('panelDropdown').classList.remove('open');
+      }
+    });
+  </script>
+</body>
+</html>
