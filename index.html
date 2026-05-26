@@ -45,15 +45,14 @@ document.addEventListener('click', function(e) {
       font-family: 'Montserrat', sans-serif;
     }
 
-    /* ─── VIDEO BACKGROUND ─── */
-    #video-background {
-      position: fixed;
+    #video-background video {   
+      position: absolute;     
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      z-index: 0;
+      width: 100%;      
+      height: 100%;
+      object-fit: cover;      
+     object-position: 30% center;
     }
 
     #video-background video {
