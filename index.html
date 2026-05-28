@@ -1,24 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<script>
-window.contextInfo = {"files":[],"materials":[],"crafts":[]};
-// 处理锚点链接跳转（srcDoc iframe 中锚点链接默认行为不正确）
-document.addEventListener('click', function(e) {
-  var anchor = e.target.closest('a');
-  if (anchor) {
-    var href = anchor.getAttribute('href');
-    if (href && href.startsWith('#')) {
-      e.preventDefault();
-      var targetId = href.slice(1);
-      var target = document.getElementById(targetId);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  }
-});
-</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Studio Nilan</title>
@@ -45,25 +27,21 @@ document.addEventListener('click', function(e) {
       font-family: 'Montserrat', sans-serif;
     }
 
-    #video-background video {   
-      position: absolute;     
-      top: 0;
-      left: 0;
-      width: 100%;      
-      height: 100%;
-      object-fit: cover;      
-     object-position: 30% center;
+    #video-background {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
     }
 
-    /* Mobil dikey ekran için */
-    @media (max-width: 768px) and (orientation: portrait) {
-      #video-background video {
-        width: 100%;
-        height: 100%;
-        min-width: 100%;
-        min-height: 100%;
-        object-fit: cover;
-      }
+    #video-background video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 30% center;
     }
 
     .video-overlay {
@@ -565,10 +543,7 @@ document.addEventListener('click', function(e) {
 
   <!-- VIDEO BACKGROUND -->
   <div id="video-background">
-    <video id="bgVideo" autoplay loop muted playsinline preload="auto">
-    src="Minimalist%20Interior%20with%20Golden%20Afternoon%20Light.mp4"
-  
-    </video>
+    <video id="bgVideo" autoplay loop muted playsinline preload="auto" src="Minimalist%20Interior%20with%20Golden%20Afternoon%20Light.mp4"></video>
     <div class="video-overlay"></div>
   </div>
 
@@ -700,18 +675,14 @@ document.addEventListener('click', function(e) {
   <script>
     // ── Video Setup ──
     const video = document.getElementById('bgVideo');
-
-    // Ensure loop is set via JS as well
     video.loop = true;
 
-    // loadedmetadata: unmute and play
     video.addEventListener('loadedmetadata', () => {
       video.muted = false;
       video.volume = 0.4;
       video.loop = true;
       video.play().catch(err => {
         console.log('Autoplay with sound failed, trying muted first:', err);
-        // Fallback: play muted, unmute on first user interaction
         video.muted = true;
         video.play().catch(e => console.log('Muted autoplay also failed:', e));
         document.addEventListener('click', () => {
@@ -722,20 +693,17 @@ document.addEventListener('click', function(e) {
       });
     });
 
-    // canplaythrough: additional guarantee
     video.addEventListener('canplaythrough', () => {
       if (video.paused) {
         video.play().catch(err => console.log('canplaythrough play failed:', err));
       }
     });
 
-    // Loop guarantee via ended event
     video.addEventListener('ended', () => {
       video.currentTime = 0;
       video.play().catch(err => console.log('Loop replay failed:', err));
     });
 
-    // Error handling
     video.addEventListener('error', (e) => {
       console.log('Video error:', e);
     });
@@ -745,7 +713,6 @@ document.addEventListener('click', function(e) {
       e.stopPropagation();
       const dd = document.getElementById('heroDropdown');
       dd.classList.toggle('open');
-      // close panel dropdown if open
       document.getElementById('panelDropdown').classList.remove('open');
     }
 
